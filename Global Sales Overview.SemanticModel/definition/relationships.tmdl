@@ -1,0 +1,5 @@
+relationship d4553bb9-3b8c-4bf4-a1b1-b26b242d2749
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Ventas_Globales.Fecha
+	toColumn: LocalDateTable_93548f98-5971-487f-9885-3a055b5ed077.Date
+

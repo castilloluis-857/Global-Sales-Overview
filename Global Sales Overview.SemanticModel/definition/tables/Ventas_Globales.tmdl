@@ -1,0 +1,107 @@
+table Ventas_Globales
+	lineageTag: b39dcdf0-3768-4ec2-9f1e-ad1d0b21eca8
+
+	measure Total_Revenue = SUM(Ventas_Globales[Ventas])
+		formatString: 0
+		lineageTag: f9a75601-3cd1-426b-a2e4-d54c647007bb
+
+	measure Units_Sold = SUM(Ventas_Globales[Unidades])
+		formatString: 0
+		lineageTag: 507cb9db-f779-48e7-994b-90288879519c
+
+	measure Total_Cost = SUM(Ventas_Globales[Costo])
+		formatString: 0
+		lineageTag: 5bdecd3f-8dda-42e0-8a5c-0293985d6739
+
+	measure Profit_Margin = DIVIDE([Total_Revenue] - [Total_Cost], [Total_Revenue], 0)
+		lineageTag: 390b456c-834a-4da7-b1e3-3c316528f547
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 1d36d4af-b022-4283-a046-3567e862cd6f
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		variation Variación
+			isDefault
+			relationship: d4553bb9-3b8c-4bf4-a1b1-b26b242d2749
+			defaultHierarchy: LocalDateTable_93548f98-5971-487f-9885-3a055b5ed077.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Region
+		dataType: string
+		lineageTag: 24abc6a6-cb60-4614-b8e3-8416fb35354d
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: 14c94938-e619-44f9-9101-8781163541d7
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column Producto
+		dataType: string
+		lineageTag: 202806ac-23d0-4df1-86c3-40da9c234273
+		summarizeBy: none
+		sourceColumn: Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Canal
+		dataType: string
+		lineageTag: ba383efe-6b09-497e-9fbe-4cb0b56851b1
+		summarizeBy: none
+		sourceColumn: Canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column Ventas
+		dataType: int64
+		formatString: 0
+		lineageTag: 42528b8d-eabe-4ae6-9dc8-e57b2ba7518c
+		summarizeBy: sum
+		sourceColumn: Ventas
+
+		annotation SummarizationSetBy = Automatic
+
+	column Unidades
+		dataType: int64
+		formatString: 0
+		lineageTag: 1fd23980-a2f8-450e-8385-b6ab2a4ad393
+		summarizeBy: sum
+		sourceColumn: Unidades
+
+		annotation SummarizationSetBy = Automatic
+
+	column Costo
+		dataType: int64
+		formatString: 0
+		lineageTag: d44747b3-aa37-4f53-b429-7ee91d4b40de
+		summarizeBy: sum
+		sourceColumn: Costo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Ventas_Globales = m
+		mode: import
+		source =
+				let
+				    Origen = Csv.Document(File.Contents("C:\Users\casti\OneDrive\Documentos\Ventas_Globales.csv"),[Delimiter=",", Columns=8, Encoding=1252, QuoteStyle=QuoteStyle.None]),
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Origen, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"Fecha", type date}, {"Region", type text}, {"Categoria", type text}, {"Producto", type text}, {"Canal", type text}, {"Ventas", Int64.Type}, {"Unidades", Int64.Type}, {"Costo", Int64.Type}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_ResultType = Table
+
